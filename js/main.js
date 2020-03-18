@@ -62,7 +62,7 @@ function initGame() {
         hints[i].style.display = 'inline-block'
     }
     document.querySelector('.message').style.display = 'none'
-    document.querySelector('.smiley').src = '/img/smiley_normal.png'
+    document.querySelector('.smiley').src = 'img/smiley_normal.png'
     gFirstMove = true
     gGame.markedMines = 0
     gGame.markedCount = 0
@@ -142,11 +142,11 @@ function finishGame(isWin) {
     document.querySelector('.message').style.display = 'block'
     gGame.isON = false
     if (isWin) {
-        document.querySelector('.smiley').src = '/img/smiley_happy.png'
+        document.querySelector('.smiley').src = 'img/smiley_happy.png'
         document.querySelector('.message').innerText = 'Well Done!!'
         return
     } //Game over protocol.... 
-    document.querySelector('.smiley').src = '/img/smiley_sad.png'
+    document.querySelector('.smiley').src = 'img/smiley_sad.png'
     document.querySelector('.message').innerText = 'Try again next time..'
     var cells = document.querySelectorAll('.cell')
     for (var i = 0; i < cells.length; i++) {       //Expose only mines..

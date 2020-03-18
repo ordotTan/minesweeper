@@ -8,6 +8,12 @@
 
 <body onload="initGame()">
     <h1>Minesweeper</h1>
+    <div>
+        <input onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Beginner" checked><label>Beginner</label>
+        <input onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Medium"><label>Medium</label>
+        <input onchange="setDiffulty(this)" type="radio" name='difficulty'  value="Expert"><label>Expert</label>
+    </div>
+
     <div class="hints-section"> 
         <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
         <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
@@ -23,6 +29,7 @@
     <br>
     <div class="status-bar center">
         <img class="stoper" src="img/stoper.png"><div class="mil-seconds"> </div>
+        <img class="red-flag" src="img/red_flag.png"><div class="flag-counter"></div>
         <div><img onclick="initGame()" class="smiley" src="img/smiley_normal.png"> </div>
     </div>
     <table border=1 padding="10px">

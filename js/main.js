@@ -1,23 +1,17 @@
-'use strict'
+//'use strict'
 const MINE = '💣'
 const FLAG = '🚩'
 
-
 // basic 
-//todo - fix the right click menu!!!
-//todo - support 3 levels of game
-// Beginner (4*4 with 2 MINES)
-// o Medium (8 * 8 with 12 MINES) o 
-// Expert (12 * 12 with 30 MINES)
 //todo - fix design issues -- make sure block/board won't 'jump..'
 
 //nice to have
 //todo - add sound fx
 
 //bonus
-//todo - keep records in local storage and display
 //todo - Full expned (recursson!)
 //todo - "safe clicks"
+//todo - keep records in local storage and display
 //todo - mannualy position 
 //todo - undo
 
@@ -33,13 +27,13 @@ var gGame = {
     isON: false,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0,
+    // secsPassed: 0,
     markedMines: 0
 
 }
 var gLevel = {
-    SIZE: 8,
-    MINES: 10
+    SIZE: 4,
+    MINES: 2
 }
 
 var gPlayer = {
@@ -50,8 +44,11 @@ var gPlayer = {
 
 
 function initGame() {
-    clearInterval(gTimeInterval)
-    gTimeInterval = null
+    if (gTimeInterval) {
+        clearInterval(gTimeInterval)
+        gTimeInterval = null
+    }
+    document.querySelector('.flag-counter').innerText = gLevel.MINES
     document.querySelector('.mil-seconds').innerText = '0 seconds'
     document.querySelector('.life1').style.display = 'inline-block'
     document.querySelector('.life2').style.display = 'inline-block'
@@ -72,6 +69,7 @@ function initGame() {
     gPlayer.lives = 3
     gPlayer.hintActive = false;
     renderBoard(gBoard)
+    disableContextMenu();
     play()
 }
 
@@ -79,6 +77,33 @@ function play() {
     gGame.isON = true
 }
 
+function disableContextMenu() {
+    var elCells = document.querySelectorAll('td')
+    for (var i = 0; i < elCells.length; i++) {
+        elCells[i].addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        }, false);
+    }
+}
+
+function setDiffulty(elInput) {
+
+    if (elInput.value === 'Beginner') {
+        gLevel.SIZE = 7
+        gLevel.MINES = 1
+    }
+    else if (elInput.value === 'Medium') {
+        gLevel.SIZE = 8
+        gLevel.MINES = 12
+    }
+    else if (elInput.value === 'Expert') {
+        gLevel.SIZE = 12
+        gLevel.MINES = 30
+    }
+    initGame();
+}
+
+//todo
 function markSafeCell() {
     var cells = []
     var id = 0
@@ -102,7 +127,7 @@ function markSafeCell() {
         renderSafeCell(mineCell[0].i, mineCell[0].j, false)
     }, 1000);
 }
-
+//todo
 // function renderSafeCell(cellI, cellJ,isShow) {
 //     for (var i = cellI - 1; i <= cellI + 1; i++) {
 //         if (i < 0 || i >= gBoard.length) continue; //Check illegel rows
@@ -132,6 +157,7 @@ function renderHint(cellI, cellJ, isShow) {
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
             if (j < 0 || j >= gBoard.length) continue; //Check illegel cols
             var elCell = getCellElement(i, j)
+            if (gBoard[i][j].isMarked) continue
             if (isShow) elCell.classList.add('revealed')
             else elCell.classList.remove('revealed')
         }
@@ -180,8 +206,6 @@ function startTimer() {
     }, 1000);
 }
 
-
-
 function cellClicked(elCell, i, j) {
     if (!gGame.isON) return
     var cell = gBoard[i][j]
@@ -193,6 +217,7 @@ function cellClicked(elCell, i, j) {
         placeMines(gLevel.MINES)
         setMinesNegsCount(gBoard)
         renderBoard(gBoard)
+        disableContextMenu();
         gFirstMove = false
     }
 
@@ -240,10 +265,23 @@ function cellClicked(elCell, i, j) {
 }
 
 function expendedReveal(cellI, cellJ) {
+
+    if (cellI < 0 ||
+        cellJ < 0 ||
+        cellI >= gBoard.length ||
+        cellJ >= gBoard.length ||
+        gBoard[cellI][cellJ].minesAroundCount > 0 ||
+        gBoard[cellI][cellJ].isMine) {
+        // console.log('return')
+        return
+    }
+
     for (var i = cellI - 1; i <= cellI + 1; i++) {
-        if (i < 0 || i >= gBoard.length) continue; //Check illefel rows
+        if (i < 0 || i >= gBoard.length) continue; //Check illegel rows
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-            if (j < 0 || j >= gBoard.length) continue; //Check illegel cols
+            if (j < 0 || j >= gBoard.length) continue; //Check illegel col
+            //if (i === cellI && j === cellJ) continue; //Ignore the middle cell
+            //debugger
             var currentElement = getCellElement(i, j)
             if (!gBoard[i][j].isShown) { //  in order not to double count gRevealedCells
                 gBoard[i][j].isShown = true
@@ -254,10 +292,20 @@ function expendedReveal(cellI, cellJ) {
                 currentElement.innerText = 0
                 gGame.markedCount--
             }
+            // debugger
             var classToAdd = 'neg' + gBoard[i][j].minesAroundCount
             currentElement.classList.add(classToAdd)
+            // expendedReveal(i, j)
+
         }
+        //    expendedReveal(i+1, j)
+        //    expendedReveal(i-1, j)
+        expendedReveal(i, j)
     }
+    // expendedReveal(i, j+1)
+    // expendedReveal(i, j-1)
+    expendedReveal(i, j)
+    //debugger
 }
 
 function getCellElement(i, j) {
@@ -267,16 +315,12 @@ function getCellElement(i, j) {
 }
 
 function cellMarked(elCell, event) {
+    if (gFirstMove) return // can't put flags before game starts
     if (event.button != 2) return // handle only right-click
     var currCellClass = (elCell.classList[1])
     var currCoords = getCellCoord(currCellClass)
     var currCell = gBoard[currCoords.i][currCoords.j]
     if (currCell.isShown) return
-    //todo - fix the right click menu!!!
-    //event.defaultPrevented=true; 
-    var currCellClass = (elCell.classList[1])
-    var currCoords = getCellCoord(currCellClass)
-    var currCell = gBoard[currCoords.i][currCoords.j]
     if (currCell.isMarked) {
         gGame.markedCount--
         elCell.innerText = currCell.isMine ? MINE : currCell.minesAroundCount
@@ -286,12 +330,14 @@ function cellMarked(elCell, event) {
     }
     else {
         gGame.markedCount++;
+        
         if (currCell.isMine) gGame.markedMines++
         elCell.innerText = FLAG
         currCell.isMarked = true
         elCell.classList.add('revealed')
         checkGameOver()
     }
+    document.querySelector('.flag-counter').innerText=gLevel.MINES-gGame.markedCount
 }
 
 
@@ -380,18 +426,8 @@ function renderBoard(board) {
             var className = 'cell cell-' + i + '-' + j;
             var cellContent = currCell.isMine ? MINE : currCell.minesAroundCount
             strHtml += `<td  onmousedown="cellMarked(this,event)" onclick="cellClicked(this,${i},${j})" class="${className}">${cellContent}</td>`
-            // if (currCell.isMine) {
-            //     var className = 'mine'
-            // } else if (currCell === CORONA) className = 'corona'
-            // else className = ''
-            // var dataName = `data-i="${i}" data-j="${j}"`
-            // strHtml += `<td ${dataName} onclick="cellClicked(this ,${i}, ${j} )"
-            //  class="${className}"  >
-            // ${board[i][j]}
-            // </td> `
         }
         strHtml += '</tr>'
     }
     document.querySelector('.board').innerHTML = strHtml
 }
-

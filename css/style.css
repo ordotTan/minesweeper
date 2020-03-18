@@ -130,4 +130,8 @@
             .status-bar {
                 display: block;
             }
+
+            .red-flag {
+                width:25px;
+            }
         

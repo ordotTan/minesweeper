@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Minesweeper</title>
+</head>
+
+<body onload="initGame()">
+    <h1>Minesweeper</h1>
+    <div class="hints-section"> 
+        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
+        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
+        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
+        <div class="hint-label"></div>
+    </div>
+    <div class="life-section"> 
+        <img class="life life1" src="img/heart.png">
+        <img class="life life2" src="img/heart.png">
+        <img class="life life3" src="img/heart.png">
+    </div>
+    <!-- <button onclick="markSafeCell()">Get Safe Cell</button> -->
+    <br>
+    <div class="status-bar center">
+        <img class="stoper" src="img/stoper.png"><div class="mil-seconds"> </div>
+        <div><img onclick="initGame()" class="smiley" src="img/smiley_normal.png"> </div>
+    </div>
+    <table border=1 padding="10px">
+        <tbody class="board"></tbody>
+    </table>
+    <div class='message'></div>
+
+
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

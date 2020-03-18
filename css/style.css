@@ -1,0 +1,133 @@
+            /* Helpers  */
+            
+            .center {
+                text-align: center;
+            }
+            
+            .hide {
+                display: none;
+            }
+            /* Basic  */
+            
+            h1 {
+                color: red;
+                background-color: lightgoldenrodyellow;
+                padding: 5px;
+                text-align: center;
+                border: 1px solid black;
+            }
+            
+            table {
+                margin: 0 auto;
+            }
+            
+            .board {
+                border: 1px solid green;
+            }
+            
+            td {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                cursor: pointer;
+                background-color: lightgrey;
+                font-size: 0;
+            }
+            
+            .mine {
+                background-color: lightsteelblue;
+                font-size: 15px
+            }
+
+            .mine-touch {
+                background-color: red;
+                font-size: 15px
+            }
+            
+            .revealed {
+                background-color: lightsteelblue;
+                font-size: 15px
+            }
+            
+            .neg0 {
+                background-color: grey
+            }
+
+            .neg1 {
+                background-color: lightsteelblue;
+                color: blue;
+                font-size: 15px
+            }
+
+            .neg2 {
+                background-color: lightsteelblue;
+                color: green;
+                font-size: 15px
+            }
+
+            .neg3 {
+                background-color: lightsteelblue;
+                color: red;
+                font-size: 15px
+            }
+
+            .neg4 {
+                background-color: lightsteelblue;
+                color: darkblue;
+                font-size: 15px
+            }
+
+            .neg5 {
+                background-color: lightsteelblue;
+                color:greenyellow;
+                font-size: 15px
+            }
+            .neg6 {
+                background-color: lightsteelblue;
+                color:darkcyan;
+                font-size: 15px
+            }
+            .neg7 {
+                background-color: lightsteelblue;
+                color: brown;
+                font-size: 15px
+            }
+            .neg8 {
+                background-color: lightsteelblue;
+                color: black;
+                font-size: 15px
+            }
+
+            .hint {
+                width:15px;
+                padding: 5px;
+                cursor: pointer;
+                transition: 0.5s;
+            }
+
+            .hint:hover {
+                width:20px;
+            }
+
+            .smiley {
+                width: 30px;
+                cursor: pointer;
+            }
+
+            .life {
+                padding: 5px;
+                width:15px;
+            }
+
+            .mil-seconds {
+                color: black;
+            }
+
+            .stoper {
+                width:25px;
+            }
+               
+            .status-bar {
+                display: block;
+            }
+        

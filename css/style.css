@@ -40,7 +40,7 @@ td {
 }
 
 .status-bar-item {
-    width: 100px;
+    width: 103px;
     background-color: white;
     font-size: 15px;
 }
@@ -183,10 +183,12 @@ td {
 .stoper {
     width:25px;
 }
-   
-.status-bar {
-    display: block;
+
+.seconds {
+    display: inline;
+    margin: 5px;
 }
+   
 
 .red-flag {
     width:25px;
@@ -198,10 +200,7 @@ td {
     margin: 5px;
 }
 
-.seconds {
-    display: inline;
-    margin: 5px;
-}
+
 
 .input-picker {
     width: 370px;

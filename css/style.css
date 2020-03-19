@@ -9,16 +9,18 @@
 }
 /* Basic  */
 
-/* body {
-    background-image: url(/img/sky.jpeg);
-} */
+ body {
+    background-image: url(/img/sky2.png);
+    background-repeat: repeat;
+
+} 
 
 h1 {
-    color: red;
+    color:black;
     width: 500px;
     margin: auto;
     margin-bottom: 10px;
-    background-color: lightgoldenrodyellow;
+    background-color:burlywood;
     padding: 5px;
     text-align: center;
     border: 1px solid black;
@@ -50,7 +52,7 @@ td {
 
 .status-bar-item {
     width: 110px;
-    background-color: white;
+    /* background-color: white; */
     font-size: 15px;
 }
 
@@ -229,10 +231,10 @@ td {
 }
 
 .user-message {
-    font-size: 50px;
-    color: chocolate;
+    font-size: 25px;
+    color: blue;
     margin: auto;
-    width: 1000px;
+    width: 500px;
     ;
 }
 
@@ -244,4 +246,12 @@ td {
     color: white;
     padding-left: 10px;
     margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.game-area {
+    background-color: burlywood;
+    width:500px;
+    border: 1px solid black;
+    margin: auto;
 }

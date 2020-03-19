@@ -2,17 +2,13 @@
 const MINE = '💣'
 const FLAG = '🚩'
 
-// basic 
-//todo - check right-click with windows..
-
 //bonus
 //todo - Full expned (recursson!)
 
 //nice to have
+//todo - code clean-up
+//todo - more designs...
 //todo - undo
-//todo - block non-numeric input
-
-
 
 //The model
 var gCellId = 101
@@ -419,12 +415,12 @@ function checkRecords() {
         if (!gGame.isON) return
         if (gFirstMove) return // can't put flags before game starts
         if (event.button != 2) return // handle only right-click
-        var audioClick = new Audio("sound/click.wav");
-        audioClick.play();
         var currCellClass = (elCell.classList[1])
         var currCoords = getCellCoord(currCellClass)
         var currCell = gBoard[currCoords.i][currCoords.j]
         if (currCell.isShown) return
+        var audioClick = new Audio("sound/click.wav");
+        audioClick.play();
         if (currCell.isMarked) {
             gGame.markedCount--
             elCell.innerText = currCell.isMine ? MINE : currCell.minesAroundCount

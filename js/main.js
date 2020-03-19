@@ -1,19 +1,20 @@
-//'use strict'
+'use strict'
 const MINE = '💣'
 const FLAG = '🚩'
 
 // basic 
-//todo - fix design issues -- make sure block/board won't 'jump..'
-
-//nice to have
-//todo - add sound fx
+//todo - modal for game over msgs (lost live/ win / lose)
+//todo - check right-click with windows..
 
 //bonus
 //todo - Full expned (recursson!)
-//todo - "safe clicks"
 //todo - keep records in local storage and display
-//todo - mannualy position 
+
+//nice to have
+//todo - add sound fx
 //todo - undo
+//todo - block non-numeric input
+
 
 
 //The model
@@ -27,36 +28,45 @@ var gGame = {
     isON: false,
     shownCount: 0,
     markedCount: 0,
-    // secsPassed: 0,
-    markedMines: 0
+    markedMines: 0,
+    autoPlaceMines: true
 
 }
 var gLevel = {
-    SIZE: 4,
-    MINES: 2
+    SIZE: 8,
+    MINES: 1
 }
 
 var gPlayer = {
-    hints: 3,
-    lives: 3,
+    hintCount: 3,
+    liveCount: 3,
+    safeClickCount: 3,
     hintActive: false
 }
 
 
 function initGame() {
+    gPlayer.safeClickCount = 3
     if (gTimeInterval) {
         clearInterval(gTimeInterval)
         gTimeInterval = null
     }
+    document.querySelector('.myButton').classList.add('btn-disabled')
+    document.querySelector('.myButton').classList.remove('safe-cell-btn')
+    document.querySelector('.myButton').innerText = `${gPlayer.safeClickCount} safe-clicks remaining`
     document.querySelector('.flag-counter').innerText = gLevel.MINES
-    document.querySelector('.mil-seconds').innerText = '0 seconds'
-    document.querySelector('.life1').style.display = 'inline-block'
-    document.querySelector('.life2').style.display = 'inline-block'
-    document.querySelector('.life3').style.display = 'inline-block'
-    document.querySelector('.hints-section').style.display = 'none'
+    document.querySelector('.seconds').innerText = '0 seconds'
+    document.querySelector('.life1').src = "img/heart.png"
+    document.querySelector('.life2').src = "img/heart.png"
+    document.querySelector('.life3').src = "img/heart.png"
+    document.querySelector('.hint-label').style.display = 'none'
+    document.querySelector('.hint-label').innerText = ''
+
     var hints = document.querySelectorAll('.hint')
     for (var i = 0; i < hints.length; i++) {
-        hints[i].style.display = 'inline-block'
+        hints[i].src = "img/bulb.jpg"
+        hints[i].classList.remove('hint-disabled')
+        hints[i].classList.add('hint-active')
     }
     document.querySelector('.message').style.display = 'none'
     document.querySelector('.smiley').src = 'img/smiley_normal.png'
@@ -65,11 +75,14 @@ function initGame() {
     gGame.markedCount = 0
     gGame.shownCount = 0
     gBoard = buildBoard(gLevel.SIZE)
-    gPlayer.hints = 3
-    gPlayer.lives = 3
+    gPlayer.hintCount = 3
+    gPlayer.liveCount = 3
     gPlayer.hintActive = false;
     renderBoard(gBoard)
     disableContextMenu();
+    if (!gGame.autoPlaceMines) {
+        manualPlaceMines()
+    }
     play()
 }
 
@@ -86,66 +99,75 @@ function disableContextMenu() {
     }
 }
 
-function setDiffulty(elInput) {
+function setDiffulty(elDifficultyInput) {
 
-    if (elInput.value === 'Beginner') {
+    if (elDifficultyInput.value === 'Beginner') {
         gLevel.SIZE = 7
         gLevel.MINES = 1
     }
-    else if (elInput.value === 'Medium') {
+    else if (elDifficultyInput.value === 'Medium') {
         gLevel.SIZE = 8
         gLevel.MINES = 12
     }
-    else if (elInput.value === 'Expert') {
+    else if (elDifficultyInput.value === 'Expert') {
         gLevel.SIZE = 12
         gLevel.MINES = 30
     }
     initGame();
 }
 
-//todo
 function markSafeCell() {
+    if (gFirstMove) return
+    if (gPlayer.safeClickCount === 0) return
+    gPlayer.safeClickCount--
+    document.querySelector('.myButton').innerText = `${gPlayer.safeClickCount} safe-clicks remaining`
+    if (gPlayer.safeClickCount === 0) {
+        document.querySelector('.myButton').classList.add('btn-disabled')
+        document.querySelector('.myButton').classList.remove('safe-cell-btn')
+    }
     var cells = []
     var id = 0
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
-            // debugger
             var currCell = gBoard[i][j]
             //var currElCell =  getCellElement (i,j)
             if (!currCell.isMine && !currCell.isMarked && !currCell.isShown) {
-                cells[id] = ({ id: id, i: i, j: j })
+                cells[id] = ({ id: id, i: i, j: j }) //coords of all safe cells
                 id++
             }
-
         }
     }
     var randomIndex = getRandomIntInclusive(0, cells.length - 1)
     var mineCell = cells.splice(randomIndex, 1)
+    if (mineCell.length === 0) {
+        console.log('no more safe cell')
+    }
+    else {
+        renderSafeCell(mineCell[0].i, mineCell[0].j, true)
+        setTimeout(function () {
+            renderSafeCell(mineCell[0].i, mineCell[0].j, false)
+        }, 1000);
 
-    renderSafeCell(mineCell[0].i, mineCell[0].j, true)
-    setTimeout(function () {
-        renderSafeCell(mineCell[0].i, mineCell[0].j, false)
-    }, 1000);
+    }
+
 }
-//todo
-// function renderSafeCell(cellI, cellJ,isShow) {
-//     for (var i = cellI - 1; i <= cellI + 1; i++) {
-//         if (i < 0 || i >= gBoard.length) continue; //Check illegel rows
-//         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-//             if (j < 0 || j >= gBoard.length) continue; //Check illegel cols
-//             //var cell = gBoard[i][j]
-//             var elCell = getCellElement(i,j)
-//             if (isShow) elCell.classList.add('revealed')
-//             else elCell.classList.remove('revealed')
-//         }
-//     }
-// }
+
+function renderSafeCell(cellI, cellJ, isShow) {
+    var elCell = getCellElement(cellI, cellJ)
+    if (isShow) elCell.classList.add('safe-cell')
+    else elCell.classList.remove('safe-cell')
+}
+
 
 function getHint(elHint) {
 
     gPlayer.hintActive = true;
-    gPlayer.hints--;
-    elHint.style.display = "none"
+    gPlayer.hintCount--;
+    elHint.src = 'img/bulb_off.jpg'
+    elHint.onclick = ''
+    elHint.classList.add('hint-disabled')
+    elHint.classList.remove('hint-active')
+    //elHint.style.display = "none"
     document.querySelector('.hint-label').style.display = 'block'
     document.querySelector('.hint-label').innerText = 'Take a sneak-peek into one cell and its surrondings'
 }
@@ -165,6 +187,14 @@ function renderHint(cellI, cellJ, isShow) {
 }
 
 function finishGame(isWin) {
+    document.querySelector('.myButton').classList.remove('safe-cell-btn')
+    document.querySelector('.myButton').classList.add('btn-disabled')
+    var hints = document.querySelectorAll('.hint')
+    for (var i = 0; i < hints.length; i++) {
+        hints[i].src = "img/bulb_off.jpg"
+        hints[i].classList.add('hint-disabled')
+        hints[i].classList.remove('hint-active')
+    }
     document.querySelector('.message').style.display = 'block'
     gGame.isON = false
     if (isWin) {
@@ -197,7 +227,7 @@ function startTimer() {
     gStartTime = Date.now();
     gTimeInterval = setInterval(() => {
         var dif = parseInt((Date.now() - gStartTime) / 1000)
-        var elMlSeconds = document.querySelector('.mil-seconds');
+        var elMlSeconds = document.querySelector('.seconds');
         elMlSeconds.innerText = dif + ' seconds';
         if (!gGame.isON) {
             clearInterval(gTimeInterval)
@@ -212,9 +242,10 @@ function cellClicked(elCell, i, j) {
 
     if (gFirstMove) {
         startTimer()
-        document.querySelector('.hints-section').style.display = 'block'
+        document.querySelector('.myButton').classList.add('safe-cell-btn')
+        document.querySelector('.myButton').classList.remove('btn-disabled')
         cell.isFirst = true
-        placeMines(gLevel.MINES)
+        if (gGame.autoPlaceMines) placeMines(gLevel.MINES)
         setMinesNegsCount(gBoard)
         renderBoard(gBoard)
         disableContextMenu();
@@ -234,10 +265,11 @@ function cellClicked(elCell, i, j) {
     if (cell.isMarked) return
     if (cell.isShown) return
     if (cell.isMine) { //Clicked on a mine
-        var currentLife = '.life' + gPlayer.lives
-        document.querySelector(currentLife).style.display = 'none'
-        gPlayer.lives--
-        if (gPlayer.lives === 0) {
+        var currentLife = '.life' + gPlayer.liveCount
+        //document.querySelector(currentLife).style.display = 'none'
+        document.querySelector(currentLife).src = "img/broken_heart.png"
+        gPlayer.liveCount--
+        if (gPlayer.liveCount === 0) {
             elCell.classList.add('mine-touch')
             finishGame(false)
         }
@@ -287,10 +319,13 @@ function expendedReveal(cellI, cellJ) {
                 gBoard[i][j].isShown = true
                 gGame.shownCount++
             }
-            if (gBoard[i][j] === FLAG && gBoard[i][j].minesAroundCount === 0 && !gBoard[i][j].isMine) { //removing "floating" flags 
+            //debugger
+            if (currentElement.innerText === FLAG && gBoard[i][j].minesAroundCount === 0 && !gBoard[i][j].isMine) { //removing "floating" flags 
                 gBoard[i][j].isMarked = false
-                currentElement.innerText = 0
+                currentElement.innerText = ''
                 gGame.markedCount--
+                document.querySelector('.flag-counter').innerText = gLevel.MINES - gGame.markedCount
+
             }
             // debugger
             var classToAdd = 'neg' + gBoard[i][j].minesAroundCount
@@ -301,10 +336,12 @@ function expendedReveal(cellI, cellJ) {
         //    expendedReveal(i+1, j)
         //    expendedReveal(i-1, j)
         expendedReveal(i, j)
+        //cellClicked(i,j,currentElement)
     }
     // expendedReveal(i, j+1)
     // expendedReveal(i, j-1)
     expendedReveal(i, j)
+    //cellClicked(i,j,currentElement)
     //debugger
 }
 
@@ -330,14 +367,14 @@ function cellMarked(elCell, event) {
     }
     else {
         gGame.markedCount++;
-        
+
         if (currCell.isMine) gGame.markedMines++
         elCell.innerText = FLAG
         currCell.isMarked = true
         elCell.classList.add('revealed')
         checkGameOver()
     }
-    document.querySelector('.flag-counter').innerText=gLevel.MINES-gGame.markedCount
+    document.querySelector('.flag-counter').innerText = gLevel.MINES - gGame.markedCount
 }
 
 
@@ -348,22 +385,61 @@ function checkGameOver() {
 }
 
 
-function placeMines(numOfBombs) {
-    var cells = []
-    var id = 0
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard.length; j++) {
-            cells[id] = ({ id: id, i: i, j: j })
-            id++
+function toggleMinePlacment(elMinesPlaceInput) {
+    gGame.autoPlaceMines = elMinesPlaceInput.value === 'Auto' ? true : false
+    var inputs = (document.querySelectorAll('.difficulty-picker'))
+    for (var i = 0; i < inputs.length; i++) {
+        if (inputs[i].checked) {
+            setDiffulty(inputs[i])
         }
     }
+    initGame()
+}
 
-    for (var i = 0; i < numOfBombs; i++) {
-        var randomIndex = getRandomIntInclusive(0, cells.length - 1)
-        var mineCell = cells.splice(randomIndex, 1)
-        var cell = gBoard[mineCell[0].i][mineCell[0].j]
-        if (cell.isFirst) i-- //making sure not to put the mine on the first clicked cell
-        else cell.isMine = true
+function placeMines(numOfBombs) {
+    if (!gGame.autoPlaceMines) manualPlaceMines()
+    else { //auto place mines
+        var cells = []
+        var id = 0
+        for (var i = 0; i < gBoard.length; i++) {
+            for (var j = 0; j < gBoard.length; j++) {
+                cells[id] = ({ id: id, i: i, j: j })
+                id++
+            }
+        }
+
+        for (var i = 0; i < numOfBombs; i++) {
+            var randomIndex = getRandomIntInclusive(0, cells.length - 1)
+            var mineCell = cells.splice(randomIndex, 1)
+            var cell = gBoard[mineCell[0].i][mineCell[0].j]
+            if (cell.isFirst) i-- //making sure not to put the mine on the first clicked cell
+            else cell.isMine = true
+        }
+    }
+}
+
+
+function manualPlaceMines() {
+    //initGame()
+    var numOfMines = +prompt('How many mines you want to plant?')
+    gLevel.MINES = numOfMines
+    document.querySelector('.flag-counter').innerText = gLevel.MINES
+    for (var i = 0; i < numOfMines; i++) {
+        var minePlaced = false
+        var currMineCoord = prompt('i,j of ' + (i + 1) + ' mine?', 'i,j')
+        while (!minePlaced) {
+            var loc = currMineCoord.split(',')
+            if (loc[0] >= gBoard.length || loc[1] >= gBoard.length || loc[0] < 0 || loc[1] < 0) {
+                currMineCoord = prompt('Wrong input... i,j of ' + (i + 1) + ' mine?', 'i,j')
+            }
+            else if (gBoard[loc[0]][loc[1]].isMine) {
+                currMineCoord = prompt('Place taken... i,j of ' + (i + 1) + ' mine?', 'i,j')
+            }
+            else {
+                gBoard[loc[0]][loc[1]].isMine = true
+                minePlaced = true
+            }
+        }
     }
 }
 

@@ -8,33 +8,43 @@
 
 <body onload="initGame()">
     <h1>Minesweeper</h1>
-    <div>
-        <input onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Beginner" checked><label>Beginner</label>
-        <input onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Medium"><label>Medium</label>
-        <input onchange="setDiffulty(this)" type="radio" name='difficulty'  value="Expert"><label>Expert</label>
+    <div class="input-picker"> <span class="mini-header">Difficulty Level</span>
+        <input class="difficulty-picker" onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Beginner" checked><label>Beginner</label>
+        <input class="difficulty-picker" onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Medium"><label>Medium</label>
+        <input class="difficulty-picker"onchange="setDiffulty(this)" type="radio" name='difficulty'  value="Expert"><label>Expert</label>
     </div>
-
-    <div class="hints-section"> 
-        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
-        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
-        <img class="hint" onclick="getHint(this)" src="img/bulb.jpg">
-        <div class="hint-label"></div>
+    <div class="input-picker"> <span class="mini-header">Mine placement method</span>
+        <input  onchange="toggleMinePlacment(this)"  type="radio" name='toggleMines' value="Auto" checked><label>Auto</label>
+        <input  onchange="toggleMinePlacment(this)"  type="radio" name='toggleMines' value="Manual"><label>Manual</label>
     </div>
-    <div class="life-section"> 
+    <div class="life-section center"> 
         <img class="life life1" src="img/heart.png">
         <img class="life life2" src="img/heart.png">
         <img class="life life3" src="img/heart.png">
     </div>
-    <!-- <button onclick="markSafeCell()">Get Safe Cell</button> -->
-    <br>
-    <div class="status-bar center">
-        <img class="stoper" src="img/stoper.png"><div class="mil-seconds"> </div>
-        <img class="red-flag" src="img/red_flag.png"><div class="flag-counter"></div>
-        <div><img onclick="initGame()" class="smiley" src="img/smiley_normal.png"> </div>
+    <div class="status-bar">
+        <table>
+            <tr>
+                <td class="status-bar-item"><img class="stoper" src="img/stoper.png"><div class="seconds"> </div></td>
+                <td class="status-bar-item"> <div><img onclick="initGame()" class="smiley" src="img/smiley_normal.png" title='Click to restart'> </div></td>
+                <td class="status-bar-item"><img class="red-flag" src="img/red_flag.png"><div class="flag-counter"></div></td>
+            </tr>
+        </table>
+
     </div>
     <table border=1 padding="10px">
         <tbody class="board"></tbody>
     </table>
+    <div class="center">
+        <button class="myButton safe-cell-btn" onclick="markSafeCell()">3 safe-clicks remaining</button>
+    </div>
+    <div class="hints-section center"> 
+        <img class="hint hint-active" onclick="getHint(this)" src="img/bulb.jpg" title='Click to get hint'>
+        <img class="hint hint-active" onclick="getHint(this)" src="img/bulb.jpg" title='Click to get hint'>
+        <img class="hint hint-active" onclick="getHint(this)" src="img/bulb.jpg" title='Click to get hint'>
+        <div class="hint-label"></div>
+    </div>
+    
     <div class='message'></div>
 
 

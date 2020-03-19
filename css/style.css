@@ -11,8 +11,6 @@
 
  body {
     background-image: url(/img/sky2.png);
-    background-repeat: repeat;
-
 } 
 
 h1 {
@@ -31,16 +29,6 @@ table {
     margin-bottom: 20px;
 }
 
-
-.rotated-left {
-    transform: rotate(-3deg)
-}
-
-.board {
-    border: 1px solid green;
-    margin-bottom: 30px;
-}
-
 td {
     width: 30px;
     height: 30px;
@@ -50,10 +38,24 @@ td {
     font-size: 0;
 }
 
-.status-bar-item {
-    width: 110px;
-    /* background-color: white; */
-    font-size: 15px;
+.rotated-left {
+    transform: rotate(-3deg)
+}
+
+
+.game-area {
+    background-color: rgb(152, 134, 111);
+    width:500px;
+    border: 1px solid black;
+    margin: auto;
+}
+
+
+/* Game board elements */
+
+.board {
+    border: 1px solid green;
+    margin-bottom: 30px;
 }
 
 .mine {
@@ -71,38 +73,6 @@ td {
     font-size: 15px;
 }
 
-.safe-cell-btn {
-    background-color: lightseagreen;
-    border: none;
-    color: white;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    border-radius: 15px;
-    cursor:pointer;
-
-    transition: 0.5s;
-}
-
-.safe-cell-btn:hover{
-    background-color: blue;
-}
-
-.btn-disabled {
-    background-color:rgba(167, 151, 151, 0.5);
-    border: none;
-    color: white;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    border-radius: 15px;
-}
-
-
 .revealed {
     background-color: lightsteelblue;
     font-size: 15px
@@ -115,46 +85,90 @@ td {
 .neg1 {
     background-color: lightsteelblue;
     color: blue;
+    font-weight: bold;
     font-size: 15px
 }
 
 .neg2 {
     background-color: lightsteelblue;
     color: green;
+    font-weight: bold;
     font-size: 15px
 }
 
 .neg3 {
     background-color: lightsteelblue;
     color: red;
+    font-weight: bold;
     font-size: 15px
 }
 
 .neg4 {
     background-color: lightsteelblue;
     color: darkblue;
+    font-weight: bold;
     font-size: 15px
 }
 
 .neg5 {
     background-color: lightsteelblue;
     color:greenyellow;
+    font-weight: bold;
     font-size: 15px
 }
 .neg6 {
     background-color: lightsteelblue;
     color:darkcyan;
+    font-weight: bold;
     font-size: 15px
 }
 .neg7 {
     background-color: lightsteelblue;
     color: brown;
+    font-weight: bold;
     font-size: 15px
 }
 .neg8 {
     background-color: lightsteelblue;
     color: black;
+    font-weight: bold;
     font-size: 15px
+}
+
+
+/* safe-cell button & hints */
+
+.safe-cell-btn {
+    background-color: lightseagreen;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    border-radius: 15px;
+    cursor:pointer;
+    margin-bottom: 10px;
+    transition: 0.5s;
+}
+
+.safe-cell-btn:hover{
+    background-color: blue;
+}
+
+.btn-disabled {
+    background-color:rgba(167, 151, 151, 0.5);
+    border: none;
+    color: rgba(215, 201, 201,0.5);
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    border-radius: 15px;
+    cursor: not-allowed;
+    margin-bottom: 10px;
 }
 
 .hint-active {
@@ -168,6 +182,7 @@ td {
     width:15px;
     padding: 5px;
     transition: 0.5s;
+    cursor: not-allowed;
 }
 
 .hint-active:hover {
@@ -180,6 +195,25 @@ td {
 
 }
 
+/* status bar */
+
+.status-bar-item {
+    width: 110px;
+    font-size: 15px;
+}
+
+
+.stoper {
+    width:25px;
+    cursor: default;
+}
+
+.seconds {
+    display: inline;
+    margin: 3px;
+    cursor: default;
+}
+
 .smiley {
     width: 30px;
     cursor: pointer;
@@ -188,30 +222,22 @@ td {
 .life {
     padding: 5px;
     width:17px;
+    cursor: default;
 }
-
-
-.stoper {
-    width:25px;
-}
-
-.seconds {
-    display: inline;
-    margin: 3px;
-}
-   
 
 .red-flag {
     width:25px;
-    margin-left: 40px;
+    margin-left: 10px;
+    cursor: default;
 }
 
 .flag-counter {
     display: inline;
     margin: 5px;
+    cursor: default;
 }
 
-
+/* radio-button pickers */
 
 .input-picker {
     width: 370px;
@@ -221,8 +247,10 @@ td {
     color: white;
     border: 1px solid black;
     margin-bottom: 5px;
-    /* text-align:justify; */
 }
+
+
+/* modals */
 
 .mini-header {
     color: black;
@@ -232,7 +260,7 @@ td {
 
 .user-message {
     font-size: 25px;
-    color: blue;
+    color: black;
     margin: auto;
     width: 500px;
     ;
@@ -247,11 +275,4 @@ td {
     padding-left: 10px;
     margin-bottom: 10px;
     margin-top: 10px;
-}
-
-.game-area {
-    background-color: burlywood;
-    width:500px;
-    border: 1px solid black;
-    margin: auto;
 }

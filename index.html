@@ -8,13 +8,7 @@
 
 <body onload="initGame()">
     <h1>Minesweeper</h1>
-    <div class='game-area'>
-    <div class="hall-of-fame">
-        <div class='best-time-easy'></div>
-        <div class='best-time-medium'></div>
-        <div class='best-time-hard'></div>
-    </div>
-   <!-- <img class="header" src="img/bomb.png" > -->
+    <div class="game-area">
     <div class="input-picker"> <span class="mini-header">Difficulty Level</span>
         <input class="difficulty-picker" onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Beginner" checked><label>Beginner</label>
         <input class="difficulty-picker" onchange="setDiffulty(this)"  type="radio" name='difficulty' value="Medium"><label>Medium</label>
@@ -24,17 +18,27 @@
         <input  onchange="toggleMinePlacment(this)"  type="radio" name='toggleMines' value="Auto" checked><label>Auto</label>
         <input  onchange="toggleMinePlacment(this)"  type="radio" name='toggleMines' value="Manual"><label>Manual</label>
     </div>
-    <div class="life-section center"> 
-        <img class="life life1" src="img/heart.png">
-        <img class="life life2" src="img/heart.png">
-        <img class="life life3" src="img/heart.png">
-    </div>
     <div class="status-bar">
-        <table>
+        <table border="1">
             <tr>
-                <td class="status-bar-item"><img class="stoper" src="img/stoper.png"><div class="seconds"> </div></td>
-                <td class="status-bar-item"> <div><img onclick="initGame()" class="smiley" src="img/smiley_normal.png" title='Click to restart'> </div></td>
-                <td class="status-bar-item"><img class="red-flag" src="img/red_flag.png"><div class="flag-counter"></div></td>
+                <td class="status-bar-item" style="background-color:burlywood;">
+                    <div>
+                        <img class="stoper" src="img/stoper.png"><div class="seconds"></div>
+                        <hr>
+                        <div class='best-time-easy'></div>
+                        <div class='best-time-medium'></div>
+                        <div class='best-time-hard'></div>
+                    </td> 
+                    </div>
+                <td class="status-bar-item" style="background-color:burlywood;"> 
+                    <div>
+                        <img class="life life1" src="img/heart.png">
+                        <img class="life life2" src="img/heart.png">
+                        <img class="life life3" src="img/heart.png">
+                        <img onclick="initGame()" class="smiley" src="img/smiley_normal.png" title='Click to restart'> 
+                    </div>
+                </td>
+                <td class="status-bar-item" style="background-color:burlywood;"><img class="red-flag" src="img/red_flag.png"><div class="flag-counter"></div></td>
             </tr>
         </table>
 

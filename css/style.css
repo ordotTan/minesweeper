@@ -9,6 +9,10 @@
 }
 /* Basic  */
 
+/* body {
+    background-image: url(/img/sky.jpeg);
+} */
+
 h1 {
     color: red;
     width: 500px;
@@ -23,6 +27,11 @@ h1 {
 table {
     margin: 0 auto;
     margin-bottom: 20px;
+}
+
+
+.rotated-left {
+    transform: rotate(-3deg)
 }
 
 .board {
@@ -186,7 +195,7 @@ td {
 
 .seconds {
     display: inline;
-    margin: 5px;
+    margin: 3px;
 }
    
 
@@ -217,4 +226,19 @@ td {
     color: black;
     font-size: 20px;
     font-weight: bold;
+}
+
+.user-message {
+    font-size: 50px;
+    color: chocolate;
+    margin: auto;
+    width: 1000px;
+    ;
+}
+
+.hall-of-fame {
+    width: 200px;
+    background-color: gold;
+    font-size: large;
+    border: 1px black solid;
 }

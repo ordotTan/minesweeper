@@ -237,8 +237,11 @@ td {
 }
 
 .hall-of-fame {
-    width: 200px;
-    background-color: gold;
-    font-size: large;
+    width: 175px;
+    background-color: grey;
     border: 1px black solid;
+    margin: auto;
+    color: white;
+    padding-left: 10px;
+    margin-bottom: 10px;
 }

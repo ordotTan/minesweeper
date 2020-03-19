@@ -323,10 +323,8 @@ function cellClicked(elCell, i, j) {
         gBoard[i][j].isShown = true
         gGame.shownCount++
         var classToAdd = 'neg' + cell.minesAroundCount
-        //todo - why it's not working with elCell ?
-        //elCell.classList.add(classToAdd) 
-        var el = getCellElement(i, j)
-        el.classList.add(classToAdd)
+        var elCell = getCellElement(i, j)
+        elCell.classList.add(classToAdd)
     } else { //need to expend..
         expendedReveal(i, j)
     }

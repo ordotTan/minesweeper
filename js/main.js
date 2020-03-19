@@ -7,7 +7,6 @@ const FLAG = '🚩'
 
 //nice to have
 //todo - code clean-up
-//todo - more designs...
 //todo - undo
 
 //The model
@@ -74,6 +73,7 @@ function initGame() {
     }
     document.querySelector('.myButton').classList.add('btn-disabled')
     document.querySelector('.myButton').classList.remove('safe-cell-btn')
+    //document.querySelector('.myButton').onclick=''
     document.querySelector('.myButton').innerText = `${gPlayer.safeClickCount} safe-clicks remaining`
     document.querySelector('.flag-counter').innerText = gLevel.MINES
     document.querySelector('.seconds').innerText = '0 seconds'
@@ -143,6 +143,7 @@ function setDiffulty(elDifficultyInput) {
 
 function markSafeCell() {
     if (gFirstMove) return
+    if (!gGame.isON) return
     if (gPlayer.safeClickCount === 0) return
     gPlayer.safeClickCount--
     document.querySelector('.myButton').innerText = `${gPlayer.safeClickCount} safe-clicks remaining`
@@ -185,7 +186,7 @@ function renderSafeCell(cellI, cellJ, isShow) {
 
 
 function getHint(elHint) {
-
+    if (!gGame.isON) return
     gPlayer.hintActive = true;
     gPlayer.hintCount--;
     elHint.src = 'img/bulb_off.jpg'

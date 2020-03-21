@@ -10,7 +10,7 @@
 /* Basic  */
 
  body {
-    background-image: url(img/sky2.png);
+    background-image: url(/img/sky2.png);
 } 
 
 h1 {
@@ -45,7 +45,7 @@ td {
 
 .game-area {
     background-color: rgb(152, 134, 111);
-    width:500px;
+    width:530px;
     border: 1px solid black;
     margin: auto;
 }
@@ -198,7 +198,7 @@ td {
 /* status bar */
 
 .status-bar-item {
-    width: 110px;
+    width: 130px;
     font-size: 15px;
 }
 
@@ -240,7 +240,7 @@ td {
 /* radio-button pickers */
 
 .input-picker {
-    width: 370px;
+    width: 400px;
     margin: 0 auto;
     padding: 10px;
     background-color: grey;

@@ -53,7 +53,7 @@ function initGame() {
 
     var hints = document.querySelectorAll('.hint')
     for (var i = 0; i < hints.length; i++) {
-        hints[i].src = "img/bulb.jpg"
+        hints[i].src = "img/bulb.png"
         hints[i].classList.remove('hint-disabled')
         hints[i].classList.add('hint-active')
     }
@@ -78,14 +78,14 @@ function initGame() {
 
 function displayRecords(levelName) {
     //Check if we have game records in the browser's localStorage, and update it if not
-    var recordType = levelName+'Record'
-    var elRecordClass = '.best-time-'+gLevel.levelName
+    var recordType = levelName + 'Record'
+    var elRecordClass = '.best-time-' + gLevel.levelName
     var Record = localStorage.getItem(recordType);
     if (!Record) {
         document.querySelector(elRecordClass).innerText = 'No record yet'
     }
     else {
-         document.querySelector(elRecordClass).innerText = '(Record: '+Record + ' sec.)';
+        document.querySelector(elRecordClass).innerText = '(Record: ' + Record + ' sec.)';
     }
 }
 
@@ -105,25 +105,25 @@ function setDiffulty(elDifficultyInput) {
         gLevel.SIZE = 4
         gLevel.MINES = 2
         gLevel.levelName = 'easy'
-        document.querySelector('.best-time-easy').style.display='block'
-        document.querySelector('.best-time-medium').style.display='none'
-        document.querySelector('.best-time-hard').style.display='none'
+        document.querySelector('.best-time-easy').style.display = 'block'
+        document.querySelector('.best-time-medium').style.display = 'none'
+        document.querySelector('.best-time-hard').style.display = 'none'
     }
     else if (elDifficultyInput.value === 'Medium') {
         gLevel.SIZE = 8
         gLevel.MINES = 12
         gLevel.levelName = 'medium'
-        document.querySelector('.best-time-easy').style.display='none'
-        document.querySelector('.best-time-medium').style.display='block'
-        document.querySelector('.best-time-hard').style.display='none'
+        document.querySelector('.best-time-easy').style.display = 'none'
+        document.querySelector('.best-time-medium').style.display = 'block'
+        document.querySelector('.best-time-hard').style.display = 'none'
     }
     else if (elDifficultyInput.value === 'Expert') {
         gLevel.SIZE = 12
         gLevel.MINES = 30
         gLevel.levelName = 'hard'
-        document.querySelector('.best-time-easy').style.display='none'
-        document.querySelector('.best-time-medium').style.display='none'
-        document.querySelector('.best-time-hard').style.display='block'
+        document.querySelector('.best-time-easy').style.display = 'none'
+        document.querySelector('.best-time-medium').style.display = 'none'
+        document.querySelector('.best-time-hard').style.display = 'block'
     }
     initGame();
 }
@@ -143,7 +143,6 @@ function markSafeCell() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
             var currCell = gBoard[i][j]
-            //var currElCell =  getCellElement (i,j)
             if (!currCell.isMine && !currCell.isMarked && !currCell.isShown) {
                 cells[id] = ({ id: id, i: i, j: j }) //coords of all safe cells
                 id++
@@ -174,9 +173,13 @@ function renderSafeCell(cellI, cellJ, isShow) {
 
 function getHint(elHint) {
     if (!gGame.isON) return
+    var elCells = document.querySelectorAll('.cell')
+    for (var i = 0; i < elCells.length; i++) {
+        elCells[i].style.cursor = 'help'
+    }
     gPlayer.hintActive = true;
     gPlayer.hintCount--;
-    elHint.src = 'img/bulb_off.jpg'
+    elHint.src = 'img/bulb_off.png'
     elHint.onclick = ''
     elHint.classList.add('hint-disabled')
     elHint.classList.remove('hint-active')
@@ -203,7 +206,7 @@ function finishGame(isWin) {
     document.querySelector('.myButton').classList.add('btn-disabled')
     var hints = document.querySelectorAll('.hint')
     for (var i = 0; i < hints.length; i++) {
-        hints[i].src = "img/bulb_off.jpg"
+        hints[i].src = "img/bulb_off.png"
         hints[i].classList.add('hint-disabled')
         hints[i].classList.remove('hint-active')
     }
@@ -224,14 +227,13 @@ function finishGame(isWin) {
 
     document.querySelector('.smiley').src = 'img/smiley_sad.png'
     document.querySelector('.user-message').innerText = 'Game Over. Better luck next time...'
-    var cells = document.querySelectorAll('.cell')
-    for (var i = 0; i < cells.length; i++) {       //Show remaining mines
-        var currCellClass = (cells[i].classList[1])
-        var currCoords = getCellCoord(currCellClass)
-        var currCell = gBoard[currCoords.i][currCoords.j]
-        if (currCell.isMine) {
-            currCell.isShown = true
-            cells[i].classList.add('mine')
+    for (var i = 0; i < gBoard.length; i++) { //Show remaining mines
+        for (var j = 0; j < gBoard.length; j++) {
+            if (gBoard[i][j].isMine) {
+                var elCell = document.querySelector(`.cell-${i}-${j}`)
+                gBoard[i][j].isShown=true
+                elCell.classList.add('mine');
+            }
         }
     }
 }
@@ -246,7 +248,7 @@ function checkRecords() {
     }
     if (gGame.seconds < record || record === null) {
         localStorage.setItem(gameType + 'Record', gGame.seconds);
-        document.querySelector('.best-time-' + gameType).innerHTML = '(Record: '+gGame.seconds + ' sec)';
+        document.querySelector('.best-time-' + gameType).innerHTML = '(Record: ' + gGame.seconds + ' sec)';
     }
 }
 
@@ -254,7 +256,7 @@ function startTimer() {
     gStartTime = Date.now();
     gTimeInterval = setInterval(() => {
         var gameTime = parseInt((Date.now() - gStartTime) / 1000)
-        gGame.seconds = gameTime+1 //adding 1 sec to compensate for the last interval
+        gGame.seconds = gameTime + 1 //adding 1 sec to compensate for the last interval
         var elMlSeconds = document.querySelector('.seconds');
         elMlSeconds.innerText = gameTime + ' seconds';
         if (!gGame.isON) {
@@ -283,10 +285,14 @@ function cellClicked(elCell, i, j) {
     if (gPlayer.hintActive) { //Handle click post "hint" request
         gGame.currentHintUsed = true
         renderHint(i, j, true)
+        var elCells = document.querySelectorAll('.cell')
+        for (var cellIndex = 0; cellIndex < elCells.length; cellIndex++) {
+            elCells[cellIndex].style.cursor = 'pointer'
+        }
         setTimeout(function () {
             renderHint(i, j, false)
             gPlayer.hintActive = false
-            gGame.currentHintUsed=false
+            gGame.currentHintUsed = false
             document.querySelector('.hint-label').style.display = 'none'
         }, 1000);
         return;
@@ -345,7 +351,6 @@ function expendedReveal(cellI, cellJ) {
     if (currentElement.innerText === FLAG && gBoard[cellI][cellJ].minesAroundCount === 0 && !gBoard[cellI][cellJ].isMine) { //removing "floating" flags 
         gBoard[cellI][cellJ].isMarked = false
         currentElement.innerText = ''
-        console.log('removed floating flag')
         gGame.markedCount--
         document.querySelector('.flag-counter').innerText = gLevel.MINES - gGame.markedCount
     }
@@ -364,14 +369,10 @@ function expendedReveal(cellI, cellJ) {
     }
 }
 
-
-function cellMarked(elCell,i,j,clickEvent) {
-   // if (event.button != 2) return // handle only right-click
-   clickEvent.preventDefault()//Cancel context-menu 
+function cellMarked(elCell, i, j, clickEvent) {
+    clickEvent.preventDefault()//Cancel context-menu 
     if (!gGame.isON) return
     if (gFirstMove) return // can't put flags before game starts
-    //var currCellClass = (elCell.classList[1])
-    //var currCoords = getCellCoord(currCellClass)
     var currCell = gBoard[i][j]
     if (currCell.isShown) return
     var audioClick = new Audio("sound/click.wav");
@@ -401,7 +402,8 @@ function checkGameOver() {
 }
 
 
-function toggleMinePlacment(elMinesPlaceInput) {8
+function toggleMinePlacment(elMinesPlaceInput) {
+    8
 
     gGame.autoPlaceMines = elMinesPlaceInput.value === 'Auto' ? true : false
     //Need to render the booard according to the new difficuly level

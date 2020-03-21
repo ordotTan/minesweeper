@@ -1,12 +1,5 @@
 'use strict'
 
-// Gets a string such as:  'cell-2-7' and returns {i:2, j:7}
-function getCellCoord(strCellId) {
-    var parts = strCellId.split('-')
-    var coord = { i: +parts[1], j: +parts[2] };
-    return coord;
-}
-
 function getCellElement(i, j) {
     var className = '.cell-' + i + '-' + j
     var elCell = document.querySelector(className)

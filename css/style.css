@@ -45,7 +45,7 @@ td {
 
 .game-area {
     background-color: rgb(152, 134, 111);
-    width:530px;
+    width:500px;
     border: 1px solid black;
     margin: auto;
 }
@@ -172,21 +172,21 @@ td {
 }
 
 .hint-active {
-    width:15px;
+    width:40px;
     padding: 5px;
     cursor: pointer;
     transition: 0.5s;
 }
 
 .hint-disabled {
-    width:15px;
+    width:25px;
     padding: 5px;
     transition: 0.5s;
     cursor: not-allowed;
 }
 
 .hint-active:hover {
-    width:20px;
+    width:50px;
 }
 
 .hint-label {
@@ -198,7 +198,7 @@ td {
 /* status bar */
 
 .status-bar-item {
-    width: 130px;
+    width: 110px;
     font-size: 15px;
 }
 
@@ -240,7 +240,7 @@ td {
 /* radio-button pickers */
 
 .input-picker {
-    width: 400px;
+    width: 370px;
     margin: 0 auto;
     padding: 10px;
     background-color: grey;

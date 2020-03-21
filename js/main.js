@@ -16,7 +16,8 @@ var gGame = {
     markedMines: 0,
     seconds: 0,
     autoPlaceMines: true,
-    currentHintUsed: false
+    currentHintUsed: false,
+    placedMined: 0
 
 }
 var gLevel = {
@@ -65,6 +66,7 @@ function initGame() {
     gGame.markedCount = 0
     gGame.seconds = 0
     gGame.shownCount = 0
+    gGame.placedMined = 0
     gPlayer.hintCount = 3
     gPlayer.liveCount = 3
     gPlayer.hintActive = false;
@@ -231,7 +233,7 @@ function finishGame(isWin) {
         for (var j = 0; j < gBoard.length; j++) {
             if (gBoard[i][j].isMine) {
                 var elCell = document.querySelector(`.cell-${i}-${j}`)
-                gBoard[i][j].isShown=true
+                gBoard[i][j].isShown = true
                 elCell.classList.add('mine');
             }
         }
@@ -268,6 +270,20 @@ function startTimer() {
 
 function cellClicked(elCell, i, j) {
     if (gGame.currentHintUsed) return // protection from "abusing" single hint for multiple times
+    if (!gGame.autoPlaceMines && gGame.placedMined < gLevel.MINES) {
+        if (gBoard[i][j].isMine) return
+        gBoard[i][j].isMine = true
+        elCell.innerHTML = MINE
+        elCell.classList.add('revealed') //temporary reveal...
+        gGame.placedMined++
+        if (gGame.placedMined === gLevel.MINES) {//finished placing mines. hide them all and render the board
+            setTimeout(function () {
+                renderBoard(gBoard)
+            }, 1000);
+
+        }
+        return
+    }
     if (!gGame.isON) return
     var cell = gBoard[i][j]
     if (gFirstMove) {  //Handle first move case
@@ -403,7 +419,6 @@ function checkGameOver() {
 
 
 function toggleMinePlacment(elMinesPlaceInput) {
-    8
 
     gGame.autoPlaceMines = elMinesPlaceInput.value === 'Auto' ? true : false
     //Need to render the booard according to the new difficuly level
@@ -438,26 +453,11 @@ function placeMines(numOfBombs) {
 
 function manualPlaceMines() {
     var numOfMines = +prompt('How many mines you want to plant?')
+    while (numOfMines<1 || numOfMines>gBoard.length**2) {
+        numOfMines = +prompt('Can\'t fit on current board.. How many mines you want to plant?')
+    }
     gLevel.MINES = numOfMines
     document.querySelector('.flag-counter').innerText = gLevel.MINES
-
-    for (var i = 0; i < numOfMines; i++) {
-        var minePlaced = false
-        var currMineCoord = prompt('Please input cordinates of mine # ' + (i + 1), 'x,y')
-        while (!minePlaced) {
-            var loc = currMineCoord.split(',')
-            if (loc[0] > gBoard.length || loc[1] > gBoard.length || loc[0] < 1 || loc[1] < 1) {
-                currMineCoord = prompt('Wrong input! Please input cordinates of mine # ' + (i + 1), 'x,y')
-            }
-            else if (gBoard[loc[0] - 1][loc[1] - 1].isMine) {
-                currMineCoord = prompt('This cell is alreay mine! Please input cordinates of mine # ' + (i + 1), 'x,y')
-            }
-            else {
-                gBoard[loc[0] - 1][loc[1] - 1].isMine = true
-                minePlaced = true
-            }
-        }
-    }
 }
 
 function createCell(minesAroundCount = 0, isShown = false, isMine = false, isMarked = false, isFirst = false) {

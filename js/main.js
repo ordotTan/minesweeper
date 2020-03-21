@@ -365,13 +365,14 @@ function expendedReveal(cellI, cellJ) {
 }
 
 
-function cellMarked(elCell, event) {
-    if (event.button != 2) return // handle only right-click
+function cellMarked(elCell,i,j,clickEvent) {
+   // if (event.button != 2) return // handle only right-click
+   clickEvent.preventDefault()//Cancel context-menu 
     if (!gGame.isON) return
     if (gFirstMove) return // can't put flags before game starts
-    var currCellClass = (elCell.classList[1])
-    var currCoords = getCellCoord(currCellClass)
-    var currCell = gBoard[currCoords.i][currCoords.j]
+    //var currCellClass = (elCell.classList[1])
+    //var currCoords = getCellCoord(currCellClass)
+    var currCell = gBoard[i][j]
     if (currCell.isShown) return
     var audioClick = new Audio("sound/click.wav");
     audioClick.play();
@@ -499,7 +500,7 @@ function renderBoard(board) {
             var currCell = (board[i][j])
             var className = 'cell cell-' + i + '-' + j;
             var cellContent = currCell.isMine ? MINE : currCell.minesAroundCount
-            strHtml += `<td  onmousedown="cellMarked(this,event)" onclick="cellClicked(this,${i},${j})" class="${className}">${cellContent}</td>`
+            strHtml += `<td  onclick="cellClicked(this,${i},${j})" oncontextmenu="cellMarked(this,${i}, ${j}, event)" class="${className}">${cellContent}</td>`
         }
         strHtml += '</tr>'
     }

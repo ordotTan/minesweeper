@@ -467,7 +467,8 @@ function placeMines(numOfBombs) {
 
 function manualPlaceMines() {
     var numOfMines = +prompt('How many mines you want to plant?')
-    while ((numOfMines < 1 || numOfMines > gBoard.length ** 2) && numOfMines === null) {
+    while (numOfMines < 1 || numOfMines > gBoard.length ** 2) {
+        if (numOfMines === 0) break
         numOfMines = +prompt('Can\'t fit on current board.. How many mines you want to plant?')
     }
     gLevel.mines = numOfMines

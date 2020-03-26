@@ -5,7 +5,7 @@ const FLAG = '🚩'
 //The model
 var gCellId = 101
 var gBoard
-var gFirstMove = true
+var gIsFirstMove = true
 var gStartTime
 var gTimeInterval
 
@@ -21,8 +21,8 @@ var gGame = {
 
 }
 var gLevel = {
-    SIZE: 4,
-    MINES: 2,
+    size: 4,
+    mines: 2,
     levelName: 'easy'
 }
 
@@ -33,8 +33,11 @@ var gPlayer = {
     hintActive: false
 }
 
+
+//todo // CR: too big of a function, break into few smaller functions
+//todo - treak the "live" in a more generic way, so it will be easier to add/remove lifes
 function initGame() {
-    gBoard = buildBoard(gLevel.SIZE)
+    gBoard = buildBoard(gLevel.size)
     displayRecords(gLevel.levelName)
     gPlayer.safeClickCount = 3
     if (gTimeInterval) {
@@ -44,7 +47,7 @@ function initGame() {
     document.querySelector('.myButton').classList.add('btn-disabled')
     document.querySelector('.myButton').classList.remove('safe-cell-btn')
     document.querySelector('.myButton').innerText = `${gPlayer.safeClickCount} safe-clicks remaining`
-    document.querySelector('.flag-counter').innerText = gLevel.MINES
+    document.querySelector('.flag-counter').innerText = gLevel.mines
     document.querySelector('.seconds').innerText = '0 seconds'
     document.querySelector('.life1').src = "img/heart.png"
     document.querySelector('.life2').src = "img/heart.png"
@@ -60,7 +63,7 @@ function initGame() {
     }
     document.querySelector('.user-message').style.display = 'none'
     document.querySelector('.smiley').src = 'img/smiley_normal.png'
-    gFirstMove = true
+    gIsFirstMove = true
     gGame.currentHintUsed = false
     gGame.markedMines = 0
     gGame.markedCount = 0
@@ -75,6 +78,10 @@ function initGame() {
     if (!gGame.autoPlaceMines) {
         manualPlaceMines()
     }
+    if (gLevel.mines === 0 || gLevel.mines === null ) {  //protect from 0 mines set in manual mode
+        gGame.isON = false
+        return
+    }  
     gGame.isON = true
 }
 
@@ -101,27 +108,30 @@ function disableContextMenu() { // disable right click from all table cells.
     }
 }
 
+
+//todo CR: repeating some code with few value changes can be in one function
+
 function setDiffulty(elDifficultyInput) {
 
     if (elDifficultyInput.value === 'Beginner') {
-        gLevel.SIZE = 4
-        gLevel.MINES = 2
+        gLevel.size = 4
+        gLevel.mines = 2
         gLevel.levelName = 'easy'
         document.querySelector('.best-time-easy').style.display = 'block'
         document.querySelector('.best-time-medium').style.display = 'none'
         document.querySelector('.best-time-hard').style.display = 'none'
     }
     else if (elDifficultyInput.value === 'Medium') {
-        gLevel.SIZE = 8
-        gLevel.MINES = 12
+        gLevel.size = 8
+        gLevel.mines = 12
         gLevel.levelName = 'medium'
         document.querySelector('.best-time-easy').style.display = 'none'
         document.querySelector('.best-time-medium').style.display = 'block'
         document.querySelector('.best-time-hard').style.display = 'none'
     }
     else if (elDifficultyInput.value === 'Expert') {
-        gLevel.SIZE = 12
-        gLevel.MINES = 30
+        gLevel.size = 12
+        gLevel.mines = 30
         gLevel.levelName = 'hard'
         document.querySelector('.best-time-easy').style.display = 'none'
         document.querySelector('.best-time-medium').style.display = 'none'
@@ -131,7 +141,7 @@ function setDiffulty(elDifficultyInput) {
 }
 
 function markSafeCell() {
-    if (gFirstMove) return
+    if (gIsFirstMove) return
     if (!gGame.isON) return
     if (gPlayer.safeClickCount === 0) return
     gPlayer.safeClickCount--
@@ -267,16 +277,24 @@ function startTimer() {
         }
     }, 1000);
 }
-
+//todo CR: too big of a function, break into few smaller functions, you are not using the model for rendering
+//todo - consider having renderCell function to help here
 function cellClicked(elCell, i, j) {
-    if (gGame.currentHintUsed) return // protection from "abusing" single hint for multiple times
-    if (!gGame.autoPlaceMines && gGame.placedMined < gLevel.MINES) {
+    var cell = gBoard[i][j]
+    if (!gGame.isON) return
+    if (cell.isMarked) return
+    if (cell.isShown) return
+    if (gGame.currentHintUsed) return // protection from "abusing" single hint for multiple time
+    var audioClick = new Audio("sound/click.wav");
+    audioClick.play();
+
+    if (!gGame.autoPlaceMines && gGame.placedMined < gLevel.mines) { //Manual mines mode
         if (gBoard[i][j].isMine) return
         gBoard[i][j].isMine = true
         elCell.innerHTML = MINE
         elCell.classList.add('revealed') //temporary reveal...
         gGame.placedMined++
-        if (gGame.placedMined === gLevel.MINES) {//finished placing mines. hide them all and render the board
+        if (gGame.placedMined === gLevel.mines) {//finished placing mines. hide them all and render the board
             setTimeout(function () {
                 renderBoard(gBoard)
             }, 1000);
@@ -284,18 +302,18 @@ function cellClicked(elCell, i, j) {
         }
         return
     }
-    if (!gGame.isON) return
-    var cell = gBoard[i][j]
-    if (gFirstMove) {  //Handle first move case
+
+    if (gIsFirstMove) {  //Handle first move case
         startTimer()
         document.querySelector('.myButton').classList.add('safe-cell-btn')
         document.querySelector('.myButton').classList.remove('btn-disabled')
         cell.isFirst = true
-        if (gGame.autoPlaceMines) placeMines(gLevel.MINES)
+        if (gGame.autoPlaceMines) placeMines(gLevel.mines)
         setMinesNegsCount(gBoard)
         renderBoard(gBoard)
         disableContextMenu();
-        gFirstMove = false
+        elCell = getCellElement(i, j) // getting updated "elCell" element post mine placement 
+        gIsFirstMove = false
     }
 
     if (gPlayer.hintActive) { //Handle click post "hint" request
@@ -314,15 +332,11 @@ function cellClicked(elCell, i, j) {
         return;
     }
 
-    if (cell.isMarked) return
-    if (cell.isShown) return
-    var audioClick = new Audio("sound/click.wav");
-    audioClick.play();
     if (cell.isMine) { //Clicked on a mine
-        var QuakeInterval = setInterval(explode, 100);
+        var quakeInterval = setInterval(explode, 100);
         setTimeout(function () {
-            clearInterval(QuakeInterval)
-            QuakeInterval = null
+            clearInterval(quakeInterval)
+            quakeInterval = null
             document.querySelector('.board').classList.remove('rotated-left')
         }, 1200);
         var explosion = new Audio("sound/explosion.wav");
@@ -345,7 +359,6 @@ function cellClicked(elCell, i, j) {
         gBoard[i][j].isShown = true
         gGame.shownCount++
         var classToAdd = 'neg' + cell.minesAroundCount
-        var elCell = getCellElement(i, j)
         elCell.classList.add(classToAdd)
     } else { //need to expend..
         expendedReveal(i, j)
@@ -354,6 +367,7 @@ function cellClicked(elCell, i, j) {
 }
 
 function expendedReveal(cellI, cellJ) {
+    //"stop" conditions to the
     if (cellI < 0 ||
         cellJ < 0 ||
         cellI === gBoard.length ||
@@ -368,13 +382,13 @@ function expendedReveal(cellI, cellJ) {
         gBoard[cellI][cellJ].isMarked = false
         currentElement.innerText = ''
         gGame.markedCount--
-        document.querySelector('.flag-counter').innerText = gLevel.MINES - gGame.markedCount
+        document.querySelector('.flag-counter').innerText = gLevel.mines - gGame.markedCount
     }
     var classToAdd = 'neg' + gBoard[cellI][cellJ].minesAroundCount
     currentElement.classList.add(classToAdd)
     gBoard[cellI][cellJ].isShown = true
     gGame.shownCount++
-    // Stop also when getting to cell with some negs
+    // Stop also when getting to cell with some negs. We do it after the set of initial "stop" conditions, as we want to open this cell as well
     if (gBoard[cellI][cellJ].minesAroundCount > 0) {
         return
     }
@@ -388,7 +402,7 @@ function expendedReveal(cellI, cellJ) {
 function cellMarked(elCell, i, j, clickEvent) {
     clickEvent.preventDefault()//Cancel context-menu 
     if (!gGame.isON) return
-    if (gFirstMove) return // can't put flags before game starts
+    if (gIsFirstMove) return // can't put flags before game starts
     var currCell = gBoard[i][j]
     if (currCell.isShown) return
     var audioClick = new Audio("sound/click.wav");
@@ -408,12 +422,12 @@ function cellMarked(elCell, i, j, clickEvent) {
         elCell.classList.add('revealed')
         checkGameOver() //Marking can be a winning condition (marking the last mine)
     }
-    document.querySelector('.flag-counter').innerText = gLevel.MINES - gGame.markedCount
+    document.querySelector('.flag-counter').innerText = gLevel.mines - gGame.markedCount
 }
 
 function checkGameOver() {
     if (gGame.markedCount === gGame.markedMines &&
-        gGame.shownCount === (gLevel.SIZE ** 2) - gGame.markedMines &&
+        gGame.shownCount === (gLevel.size ** 2) - gGame.markedMines &&
         gGame.markedMines > 0) finishGame(true)
 }
 
@@ -453,11 +467,11 @@ function placeMines(numOfBombs) {
 
 function manualPlaceMines() {
     var numOfMines = +prompt('How many mines you want to plant?')
-    while (numOfMines<1 || numOfMines>gBoard.length**2) {
+    while ((numOfMines < 1 || numOfMines > gBoard.length ** 2) && numOfMines === null) {
         numOfMines = +prompt('Can\'t fit on current board.. How many mines you want to plant?')
     }
-    gLevel.MINES = numOfMines
-    document.querySelector('.flag-counter').innerText = gLevel.MINES
+    gLevel.mines = numOfMines
+    document.querySelector('.flag-counter').innerText = gLevel.mines
 }
 
 function createCell(minesAroundCount = 0, isShown = false, isMine = false, isMarked = false, isFirst = false) {
@@ -512,4 +526,15 @@ function renderBoard(board) {
 function explode() {
     var elBoard = document.querySelector('.board')
     elBoard.classList.toggle('rotated-left')
+}
+
+function buildBoard(size) {
+    var board = [];
+    for (var i = 0; i < size; i++) {
+        board.push([])
+        for (var j = 0; j < size; j++) {
+            board[i][j] = createCell()
+        }
+    }
+    return board;
 }
